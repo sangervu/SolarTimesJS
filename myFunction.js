@@ -22,6 +22,11 @@ var trans = new CellestialSolarTransitions(alfaSun, deltaSun, lat, stellarTimeNo
 
 var sol = new SolarCalculations(deltaSun, lat, currentSunElevation, maxSunElevation, timeSunSouth);
     
-document.getElementById("demo").innerHTML = trans.timeSouthTrue;
+document.getElementById("demo1").innerHTML = deltaSun;
+document.getElementById("demo2").innerHTML = alfaSun;
+document.getElementById("demo3").innerHTML = trans.timeSouthTrue;
+document.getElementById("demo4").innerHTML = trans.timeSouthTrue;
+document.getElementById("demo5").innerHTML = trans.timeSouthTrue;
+document.getElementById("demo6").innerHTML = trans.timeSouthTrue;
 
 }
