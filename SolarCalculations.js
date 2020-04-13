@@ -127,12 +127,10 @@ function SolarCalculations(deltaSun, lat, currentSunElevation, maxSunElevation, 
 
 function toRadians(degree) {
 
-    var radian = degree * 2 * Math.PI / 180;
-    return radian;
+    return degree * 2 * Math.PI / 180;
 }
 
 function toDegrees(radians) {
 
-    var degrees = radians * 180 / (2 * Math.PI);
-    return degrees;
+    return radians * 180 / (2 * Math.PI);
 }
