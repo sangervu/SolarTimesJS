@@ -1,6 +1,6 @@
 
-// tällä funktiolla lasketaan aurinkoon liittyviä suureita kuten UVI ja säteilyteho, jotka ovat riippuvaisia auringon elevaatiosta taivaalla
-// by Sakari Angervuori 8.4.2020
+// tällä funktiolla lasketaan aurinkoon liittyviä suureita kuten UVI ja auringon säteilyteho, jotka ovat riippuvaisia auringon elevaatiosta taivaalla
+// by Sakari Angervuori 15.4.2020
 
 function SolarCalculations(deltaSun, lat, currentSunElevation, maxSunElevation, timeSunSouth) {
 
@@ -15,10 +15,13 @@ function SolarCalculations(deltaSun, lat, currentSunElevation, maxSunElevation, 
     var warningText;
     var uvIndexEnd;
     
-    var a = 2.696056, b = 5.474571, c = -0.09888, d = 0.040392;
-    var m = 1. / Math.cos(Math.asin(6371. / 6393. * Math.sin((Math.PI / 2 - currentSunElevationRad))));
-
-    var uvIndex = Math.round(10 * Math.pow(Math.cos(Math.PI / 2 - currentSunElevationRad), a) * Math.exp(b + c * m + d * m * m) / 25.) / 10;
+    var a = 2.696056;
+    var b = 5.474571;
+    var c = -0.09888;
+    var d = 0.040392;
+    var m = 1. / (Math.cos(Math.asin(6371. / 6393. * Math.sin((Math.PI/2 - currentSunElevationRad)))));
+    var uvIndex = Math.round(10 * Math.pow(Math.cos(Math.PI/2 - currentSunElevationRad), a) * Math.exp(b + c * m + d * m * m) / 25.) / 10;
+    
     if (isNaN(uvIndex)) {
         uvIndex = 0;
     }
@@ -36,9 +39,7 @@ function SolarCalculations(deltaSun, lat, currentSunElevation, maxSunElevation, 
         uvIndexEnd = timeSunSouth + uvIndexOverThree / 2;
     }
     
-    //TimeFormat timeUvi = new TimeFormat(uvIndexEnd);
-    //this.UvIndexEndString = (TimeFormat.hourTimeString) + ":" + (TimeFormat.minuteTimeString);
-
+// varoitustekstit UVI säteilyn intensiteetin mukaan
     if (uvIndex >= 10) {
         //setBgColorById ("rgb(153,140,255)");
         warningText = "PYSY POIS AURINGOSTA!";
@@ -102,8 +103,8 @@ function SolarCalculations(deltaSun, lat, currentSunElevation, maxSunElevation, 
     var maxSolarPowerAnnum = Math.round(10 * 1350.0 * Math.sin(maxSunElevationAnnumRad) * Math.pow(0.78, (1 / Math.sin(maxSunElevationAnnumRad)))) / 10;
 
     // Maximun solar power per current day
-    var solarPower = Math.round(10 * 1350.0 * Math.sin(maxSunElevationDiemRad) * Math.pow(0.78, (1 / Math.sin(maxSunElevationDiemRad)))) / 10;
-    if (solarPower < 0) {
+    var maxSolarPowerDiem = Math.round(10 * 1350.0 * Math.sin(maxSunElevationDiemRad) * Math.pow(0.78, (1 / Math.sin(maxSunElevationDiemRad)))) / 10;
+    if (maxSolarPowerDiem < 0) {
         maxSolarPowerDiem = 0;
     }
 
@@ -113,24 +114,25 @@ function SolarCalculations(deltaSun, lat, currentSunElevation, maxSunElevation, 
     if (currentSolarPower < 0) {
         currentSolarPower = 0;
     }
-    
+
+    //this-määrittelyllä näitä arvoja voidaan lukea tehdystä objektista "." notaation kautta (vrt. JS obektin määrittelyä). 
     this.WarningText = warningText;
-    this.UvIndex = uvIndex;
+    this.uvIndex = uvIndex;
     this.UvIndexMax = uvIndexMax;
     this.UvIndexOverThree = uvIndexOverThree;
     this.UvIndexEnd = uvIndexEnd;
     this.UvIndexEndString;
-    this.SolarPowerAnnualMax = maxSolarPowerAnnum;
+    this.SolarPowerAnnumMax = maxSolarPowerAnnum;
     this.SolarPowerDiemMax = maxSolarPowerDiem;
     this.SolarPowerCurrent = currentSolarPower;
 }
 
 function toRadians(degree) {
 
-    return degree * 2 * Math.PI / 180;
+    return degree * Math.PI / 180;
 }
 
 function toDegrees(radians) {
 
-    return radians * 180 / (2 * Math.PI);
+    return radians * 180 / Math.PI;
 }
