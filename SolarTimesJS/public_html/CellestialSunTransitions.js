@@ -1,9 +1,12 @@
+// tällä funktiolla lasketaan auringon nosu- ja laskuhetket
+// by Sakari Angervuori 15.4.2020
+
 function CellestialSolarTransitions(alfa, delta, lat, timeStellarNoon) {
 
-    var horizon = toRadians(-0.83); // in degrees
-    var visible = toRadians(-6.); // Civil sunset in degrees
-    var nocturnal = toRadians(-12.); // Nautical sunset in degrees
-    var night = toRadians(-18.); // Astronomical sunset in degrees
+    var horizon = toRadians(-0.83); // Aurinko laskee horisonttiin
+    var visible = toRadians(-6.); // Auringon lasku "porvarillinen hämärä"
+    var nocturnal = toRadians(-12.); // Auringon lasku "nauttinen hämärä"
+    var night = toRadians(-18.); // Auringonlasku astronominen hämärä (täydellinen pimeys)
 
     var latRad = toRadians(lat);
     var deltaRad = toRadians(delta);
@@ -24,7 +27,7 @@ function CellestialSolarTransitions(alfa, delta, lat, timeStellarNoon) {
     //Set time for total darkness
     var timeSetAstronomical = minHour(timeSouth + toDegrees(Math.acos(Math.sin(night) / (Math.cos(deltaRad) * Math.cos(latRad)) - Math.tan(deltaRad) * Math.tan(latRad))) * 24. / 360.);
 
-
+    //Desimaalinen aikaesitys muutetaan normi esitystavaksi (HH:MM)
     this.timeRizeTrue = timeHour(timeRize) + ":" + timeMinute(timeRize);
     this.timeSouthTrue = timeHour(timeSouth) + ":" + timeMinute(timeSouth);
     this.timeSetTrue = timeHour(timeSet) + ":" + timeMinute(timeSet);
@@ -33,28 +36,30 @@ function CellestialSolarTransitions(alfa, delta, lat, timeStellarNoon) {
     this.timeSetDark = timeHour(timeSetAstronomical) + ":" + timeMinute(timeSetAstronomical);
 }
 
-function check(valid) {
-    if (isNaN(valid)) {
-        return "-";
-    } else {
-        return;
-    }
-}
-
 function timeHour(timeValue) {
     // hour value
+    if (isNaN(timeValue)) {
+        return "-";
+    }
     var hourTime = Math.floor(timeValue);
-    return hourTime;
+    if (hourTime < 10) {
+        return "0" + hourTime;
+    } else {
+        return hourTime;
+    }
 }
 
 function timeMinute(timeValue) {
     // minute value
-    var minuteTime = Math.floor((timeValue - Math.floor(timeValue)) * 60);
-
-    if (minuteTime < 10) {
-        minuteTimeString = "0" + minuteTime;
+    if (isNaN(timeValue)) {
+        return "-";
     }
-    return minuteTime;
+    var minuteTime = Math.floor((timeValue - Math.floor(timeValue)) * 60);
+    if (minuteTime < 10) {
+        return "0" + minuteTime;
+    } else {
+        return minuteTime;
+    }
 }
 
 /* (0-360 deg) Metodi*/

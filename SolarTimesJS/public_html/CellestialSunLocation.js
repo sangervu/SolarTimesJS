@@ -1,10 +1,10 @@
 
 // tällä funktiolla lasketaan auringon tämän hetkinen positio taivaalla
-// by Sakari Angervuori 14.4.2020
+// by Sakari Angervuori 15.4.2020
 
 function CellestialSolarPosition(lat, lon, timeZone, year, month, day, k, hour, minute) {
 
-    // function for calculatin julian date and T
+    //Ohessa olevilla laskukaavoilla lasketaan auringon paikka taivaalla syötetyillä parametrin arvoilla. Lasku toimii kaikkialla maapallolla.
 
     var julian = 367 * year - (7 * (year + (month + 9) / 12)) / 4 - (3 * ((year + (month - 9) / 7) / 100 + 1)) / 4 + 275 * month / 9 + day + 1721029;
     var T = (julian - k + hour / 24. + minute / 1440. - 2451545.) * 0.000027378507871321;
@@ -17,7 +17,8 @@ function CellestialSolarPosition(lat, lon, timeZone, year, month, day, k, hour, 
     var C = MathNew.deg2rad((1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.sin(M) + (0.019993 - 0.000101 * T) * Math.sin(2 * M) + 0.000289 * Math.sin(3 * M));
     var x = Math.cos(Lo + C);
     var y = Math.cos(epsilonRad) * Math.sin(Lo + C);
-
+    
+    // "alfa" ja "delta" ilmoittavat auringon paikan taivaalla asteina 
     var alfa = MathNew.trueTan(y, x);
     var delta = MathNew.rad2deg(Math.asin(Math.sin(epsilonRad) * Math.sin(Lo + C)));
 
@@ -41,20 +42,21 @@ function CellestialSolarPosition(lat, lon, timeZone, year, month, day, k, hour, 
     //this.C = C;
     //this.x = x;
     //this.y = y;
-    //this.deltaSun = delta;
-    //this.alfaSun = alfa;
     //this.Ax = Ax;
     //this.Ay = Ay;
     
-    /*korkeimmillaan, eli etelässä*/
+    //this-määrittelyllä näitä arvoja voidaan lukea tehdystä objektista "." notaation kautta (vrt. JS obektin määrittelyä). 
+    this.deltaSun = delta;
+    this.alfaSun = alfa;
     this.stellarTimeMidDay = stellarTimeNoon;
-    this.currentSunAzimuth = Math.round(10 * MathNew.minDegree(MathNew.trueTan(Ay, Ax) + 180.)) / 10;
-    //this.azimth_NSEW = NorthSouthEastWest(currentSunAzimuth);
+    var currentSunAzimuth = Math.round(10 * MathNew.minDegree(MathNew.trueTan(Ay, Ax) + 180.)) / 10;
+    this.azimuth_NSEW = NorthSouthEastWest(currentSunAzimuth);
     this.currentSunElevation = Math.round(10 * MathNew.rad2deg(Math.asin(Math.sin(deltaRad) * Math.sin(latitudeRad) + Math.cos(hourRad) * Math.cos(deltaRad) * Math.cos(latitudeRad)))) / 10;
     this.maxSunElevation = Math.round(10 * MathNew.trueElevation(90.0 + delta - lat)) / 10;
     this.timeSunSouth = MathNew.minDegree(alfa - stellarTimeNoon) * 24. / 360.;
 }
 
+//näitä laskukaavoja tarvitaan JS Math kirjaston lisänä
 var MathNew = {
     deg2rad: function (deg) {
         return deg * (Math.PI) / 180;
@@ -106,7 +108,7 @@ var MathNew = {
     }
 };
 
-// Metodi deg => ESNW
+// Metodi deg => ESNW, eli atsimuutti asteet muutetaan "selkokielelle"
 function NorthSouthEastWest(atsimuutti) {
     suunta = " ";
     if ((atsimuutti >= (180. - 11.25)) && (atsimuutti < (180. + 11.25))) {
